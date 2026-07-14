@@ -21,129 +21,143 @@ export default function LeadTable({ leads, onView }) {
     }
   };
 
-  return (
+  const isSameDay = (date1, date2) => {
+    return (
+      date1.getDate() === date2.getDate() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getFullYear() === date2.getFullYear()
+    );
+  };
 
+  return (
     <div className="bg-white rounded-xl shadow-md mt-8 overflow-hidden">
 
       <div className="px-6 py-5 border-b">
-
         <h2 className="text-2xl font-bold text-slate-800">
           Lead List
         </h2>
-
       </div>
 
       <div className="overflow-x-auto">
 
-        <table className="min-w-[900px] w-full">
+        <table className="w-full min-w-full">
 
           <thead className="bg-slate-100">
 
             <tr>
-
               <th className="px-6 py-4 text-left">Lead</th>
-
               <th className="px-6 py-4 text-left">Company</th>
-
               <th className="px-6 py-4 text-left">Service</th>
-
               <th className="px-6 py-4 text-left">Status</th>
-
               <th className="px-6 py-4 text-left">Owner</th>
-
               <th className="px-6 py-4 text-left">Follow-up</th>
-
               <th className="px-6 py-4 text-center">Action</th>
-
             </tr>
 
           </thead>
 
           <tbody>
 
-            {leads.map((lead) => (
+            {leads.map((lead) => {
 
-              <tr
-                key={lead.id}
-                className={`border-b hover:bg-cyan-50 transition ${
-                  new Date(lead.followup) < new Date()
-                    ? "bg-red-50"
-                    : ""
-                }`}
-              >
+              const today = new Date();
+              const followDate = new Date(lead.followup);
 
-                <td className="px-6 py-4 font-medium">
-                  {lead.name}
-                </td>
+              const activeLead =
+                lead.status === "New" ||
+                lead.status === "Qualified";
 
-                <td className="px-6 py-4">
-                  {lead.company}
-                </td>
+              const isToday = isSameDay(followDate, today);
 
-                <td className="px-6 py-4">
-                  {lead.service}
-                </td>
+              const overdue =
+                activeLead &&
+                followDate < today &&
+                !isToday;
 
-                <td className="px-6 py-4">
+              return (
 
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
-                      lead.status
-                    )}`}
-                  >
-                    {lead.status}
-                  </span>
+                <tr
+                  key={lead.id}
+                  className={`border-b hover:bg-cyan-50 transition ${
+                    overdue ? "bg-red-50" : ""
+                  }`}
+                >
 
-                </td>
+                  <td className="px-6 py-4 font-medium">
+                    {lead.name}
+                  </td>
 
-                <td className="px-6 py-4">
-                  {lead.owner}
-                </td>
+                  <td className="px-6 py-4">
+                    {lead.company}
+                  </td>
 
-                <td className="px-6 py-4">
+                  <td className="px-6 py-4">
+                    {lead.service}
+                  </td>
 
-                  <div className="flex flex-col gap-1">
+                  <td className="px-6 py-4">
 
                     <span
-                      className={`${
-                        new Date(lead.followup) < new Date()
-                          ? "text-red-600 font-semibold"
-                          : "text-gray-700"
-                      }`}
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                        lead.status
+                      )}`}
                     >
-                      {lead.followup}
+                      {lead.status}
                     </span>
 
-                    {new Date(lead.followup) < new Date() && (
+                  </td>
 
-                      <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full w-fit">
+                  <td className="px-6 py-4">
+                    {lead.owner}
+                  </td>
 
-                        Overdue
+                  <td className="px-6 py-4">
 
+                    <div className="flex flex-col gap-1">
+
+                      <span
+                        className={`${
+                          overdue
+                            ? "text-red-600 font-semibold"
+                            : isToday
+                            ? "text-orange-600 font-semibold"
+                            : "text-gray-700"
+                        }`}
+                      >
+                        {lead.followup}
                       </span>
 
-                    )}
+                      {overdue && (
+                        <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full w-fit">
+                          Overdue
+                        </span>
+                      )}
 
-                  </div>
+                      {isToday && (
+                        <span className="bg-orange-100 text-orange-700 text-xs px-2 py-1 rounded-full w-fit">
+                          Due Today
+                        </span>
+                      )}
 
-                </td>
+                    </div>
 
-                <td className="px-6 py-4 text-center">
+                  </td>
 
-                  <button
-                    onClick={() => onView(lead)}
-                    className="bg-cyan-500 hover:bg-cyan-600 transition text-white p-3 rounded-lg"
-                  >
+                  <td className="px-6 py-4 text-center">
 
-                    <FaEye />
+                    <button
+                      onClick={() => onView(lead)}
+                      className="bg-cyan-500 hover:bg-cyan-600 transition text-white p-3 rounded-lg"
+                    >
+                      <FaEye />
+                    </button>
 
-                  </button>
+                  </td>
 
-                </td>
+                </tr>
 
-              </tr>
-
-            ))}
+              );
+            })}
 
           </tbody>
 
@@ -152,7 +166,5 @@ export default function LeadTable({ leads, onView }) {
       </div>
 
     </div>
-
   );
-
 }

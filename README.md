@@ -158,4 +158,8 @@ The following functionality has been verified:
 
 ## Author
 
+<<<<<<< HEAD
 **Gadha Krishna C H**
+=======
+**Gadha Krishna C H**
+>>>>>>> 21983c0 (Updated README documentation)
