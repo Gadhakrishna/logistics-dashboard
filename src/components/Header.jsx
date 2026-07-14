@@ -29,7 +29,7 @@ export default function Header() {
           <div>
 
             <p className="font-semibold text-slate-800">
-              Gadha Krishna
+              Gadha Krishna C H 
             </p>
 
             <p className="text-xs text-slate-500">
